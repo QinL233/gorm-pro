@@ -34,7 +34,7 @@ func TestList(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	result1, _ := dao.ListEntityFieldSortTo[User, struct{ Username, Password string }](db, []string{"username", "password"}, "id", User{Id: 1})
+	result1, _ := dao.ListEntitySortFieldTo[User, struct{ Username, Password string }](db, []string{"username", "password"}, "id", User{Id: 1})
 	fmt.Println(result1)
 	result2, _ := dao.ListEntitySortTo[User, User](db, "id", User{Id: 1})
 	fmt.Println(result2)

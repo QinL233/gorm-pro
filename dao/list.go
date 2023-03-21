@@ -14,10 +14,10 @@ func ListSort[T any](db *gorm.DB, sort string, condition interface{}, args ...in
 }
 
 func ListSortTo[T any, E any](db *gorm.DB, sort string, condition interface{}, args ...interface{}) ([]E, error) {
-	return ListFieldSortTo[T, E](db, nil, sort, condition, args)
+	return ListSortFieldTo[T, E](db, nil, sort, condition, args)
 }
 
-func ListFieldSortTo[T any, E any](db *gorm.DB, field []string, sort string, condition interface{}, args ...interface{}) ([]E, error) {
+func ListSortFieldTo[T any, E any](db *gorm.DB, field []string, sort string, condition interface{}, args ...interface{}) ([]E, error) {
 	var result []E
 	var entity T
 	query := db.Model(&entity).Where(condition, args...)
@@ -45,10 +45,10 @@ func ListEntitySort[T any](db *gorm.DB, sort string, entity T) ([]T, error) {
 }
 
 func ListEntitySortTo[T any, E any](db *gorm.DB, sort string, entity T) ([]E, error) {
-	return ListEntityFieldSortTo[T, E](db, nil, sort, entity)
+	return ListEntitySortFieldTo[T, E](db, nil, sort, entity)
 }
 
-func ListEntityFieldSortTo[T any, E any](db *gorm.DB, field []string, sort string, entity T) ([]E, error) {
+func ListEntitySortFieldTo[T any, E any](db *gorm.DB, field []string, sort string, entity T) ([]E, error) {
 	var result []E
 	query := db.Model(&entity).Where(&entity)
 	if len(field) > 0 {
@@ -75,10 +75,10 @@ func ListScopeSort[T any](db *gorm.DB, sort string, scope func(db *gorm.DB) *gor
 }
 
 func ListScopeSortTo[T any, E any](db *gorm.DB, sort string, scope func(db *gorm.DB) *gorm.DB) ([]E, error) {
-	return ListScopeFieldSortTo[T, E](db, nil, sort, scope)
+	return ListScopeSortFieldTo[T, E](db, nil, sort, scope)
 }
 
-func ListScopeFieldSortTo[T any, E any](db *gorm.DB, field []string, sort string, scope func(db *gorm.DB) *gorm.DB) ([]E, error) {
+func ListScopeSortFieldTo[T any, E any](db *gorm.DB, field []string, sort string, scope func(db *gorm.DB) *gorm.DB) ([]E, error) {
 	var result []E
 	var entity T
 	query := db.Model(&entity).Scopes(scope)
