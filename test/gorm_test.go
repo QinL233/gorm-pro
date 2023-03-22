@@ -38,10 +38,28 @@ func driver() *gorm.DB {
 }
 
 func TestSaveBatch(t *testing.T) {
-
+	driver().Create([]User{
+		{1, "admin1", "admin1"},
+		{2, "admin2", "admin2"},
+	})
+	driver().Save([]User{
+		{1, "root1", "root1"},
+		{2, "root2", "root2"},
+	})
+	driver().Save([]User{
+		{Username: "admin1", Password: "admin1"},
+		{Username: "admin2", Password: "admin2"},
+	})
 }
 
 func TestDel(t *testing.T) {
+	dao.RemoveKey[User](driver(), 1)
+	dao.Remove[User](driver(), "id = ?", 2)
+	//entity传递泛型可以在参数中
+	dao.RemoveEntity(driver(), User{Id: 3})
+	dao.RemoveScope[User](driver(), func(db *gorm.DB) *gorm.DB {
+		return db.Where("id in ?", []int{1, 2, 3, 4})
+	})
 }
 
 func TestUpdate(t *testing.T) {
