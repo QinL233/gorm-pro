@@ -1,6 +1,8 @@
 package dao
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 //分页scope:每页显示数量size,页数page
 func Paginate(size int, page int) func(db *gorm.DB) *gorm.DB {
@@ -94,12 +96,12 @@ func PageEntitySortFieldTo[T any, E any](db *gorm.DB, field []string, sort strin
 自定义scope进行分页查询 - 用于组合连表等复杂查询
 */
 func PageScope[T any](db *gorm.DB, size, page int, scope func(db *gorm.DB) *gorm.DB) (int64, []T, error) {
-	return PageScopeTo[T, T](db, size, page, scope)
+	return PageScopeFieldTo[T, T](db, nil, size, page, scope)
 }
 
-func PageScopeTo[T any, E any](db *gorm.DB, size, page int, scope func(db *gorm.DB) *gorm.DB) (int64, []E, error) {
+func PageScopeFieldTo[T any, E any](db *gorm.DB, field []string, size, page int, scope func(db *gorm.DB) *gorm.DB) (int64, []E, error) {
 	var result []E
-	//注意 scope 查询必须仅为条件
+	//注意 scope 查询不得存在select
 	count, err := CountScope[T](db, scope)
 	if err != nil {
 		return 0, result, err
@@ -107,6 +109,9 @@ func PageScopeTo[T any, E any](db *gorm.DB, size, page int, scope func(db *gorm.
 	if count > 0 {
 		var entity T
 		query := db.Model(&entity).Scopes(Paginate(size, page), scope)
+		if len(field) > 0 {
+			query.Select(field)
+		}
 		if err = query.Find(&result).Error; err != nil {
 			return 0, result, err
 		}

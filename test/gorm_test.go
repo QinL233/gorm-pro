@@ -146,8 +146,10 @@ func TestPage(t *testing.T) {
 		"id asc", 10, 1,
 		User{Username: "root"})
 	fmt.Println(count2, page2)
-	count3, page3, _ := dao.PageScopeTo[User, struct{ Username string }](
-		driver(), 10, 1,
+	count3, page3, _ := dao.PageScopeFieldTo[User, struct{ Username string }](
+		driver(),
+		[]string{"username"},
+		10, 1,
 		func(db *gorm.DB) *gorm.DB {
 			//page函数使用了select count(*)因此注意scope不可以覆盖select
 			//db.Select("username")
