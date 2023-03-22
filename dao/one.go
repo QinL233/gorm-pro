@@ -52,7 +52,7 @@ func OneTry[T any](db *gorm.DB, condition interface{}, args ...interface{}) (T, 
 }
 
 func One[T any](db *gorm.DB, condition interface{}, args ...interface{}) (T, error) {
-	return OneTo[T, T](db, condition, args)
+	return OneTo[T, T](db, condition, args...)
 }
 
 func OneTo[T any, E any](db *gorm.DB, condition interface{}, args ...interface{}) (E, error) {

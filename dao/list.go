@@ -14,11 +14,11 @@ func ListSort[T any](db *gorm.DB, sort string, condition interface{}, args ...in
 }
 
 func ListSortTo[T any, E any](db *gorm.DB, sort string, condition interface{}, args ...interface{}) ([]E, error) {
-	return ListSortLimitTo[T, E](db, sort, 0, condition, args)
+	return ListSortLimitTo[T, E](db, sort, 0, condition, args...)
 }
 
 func ListSortLimitTo[T any, E any](db *gorm.DB, sort string, limit int, condition interface{}, args ...interface{}) ([]E, error) {
-	return ListSortLimitFieldTo[T, E](db, nil, sort, limit, condition, args)
+	return ListSortLimitFieldTo[T, E](db, nil, sort, limit, condition, args...)
 }
 
 func ListSortLimitFieldTo[T any, E any](db *gorm.DB, field []string, sort string, limit int, condition interface{}, args ...interface{}) ([]E, error) {
