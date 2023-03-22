@@ -6,7 +6,7 @@ import (
 )
 
 /**
-通过id查询one
+通过id查询one - 单表
 */
 func OneKeyTry[T any](db *gorm.DB, key any) (T, error) {
 	if result, err := OneKey[T](db, key); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -40,7 +40,7 @@ func OneKeyFieldTo[T any, E any](db *gorm.DB, field []string, key any) (E, error
 }
 
 /**
-通过指定参数查询one
+通过指定参数查询one - 单表
 */
 func OneTry[T any](db *gorm.DB, condition interface{}, args ...interface{}) (T, error) {
 	if result, err := One[T](db, condition, args...); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -73,7 +73,7 @@ func OneFieldTo[T any, E any](db *gorm.DB, field []string, condition interface{}
 }
 
 /**
-通过对象查询one
+通过对象查询one - 单表
 */
 func OneEntityTry[T any](db *gorm.DB, entity T) (T, error) {
 	if result, err := OneEntity[T](db, entity); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -105,7 +105,7 @@ func OneEntityFieldTo[T any, E any](db *gorm.DB, field []string, entity T) (E, e
 }
 
 /**
-自定义模式查询one
+自定义模式查询one - 满足多表组合等复杂查询
 */
 func OneScopeTry[T any](db *gorm.DB, scope func(db *gorm.DB) *gorm.DB) (T, error) {
 	if result, err := OneScope[T](db, scope); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -119,17 +119,11 @@ func OneScopeTry[T any](db *gorm.DB, scope func(db *gorm.DB) *gorm.DB) (T, error
 func OneScope[T any](db *gorm.DB, scope func(db *gorm.DB) *gorm.DB) (T, error) {
 	return OneScopeTo[T, T](db, scope)
 }
-func OneScopeTo[T any, E any](db *gorm.DB, scope func(db *gorm.DB) *gorm.DB) (E, error) {
-	return OneScopeFieldTo[T, E](db, nil, scope)
-}
 
-func OneScopeFieldTo[T any, E any](db *gorm.DB, field []string, scope func(db *gorm.DB) *gorm.DB) (E, error) {
+func OneScopeTo[T any, E any](db *gorm.DB, scope func(db *gorm.DB) *gorm.DB) (E, error) {
 	var result E
 	var entity T
 	query := db.Model(&entity).Scopes(scope)
-	if len(field) > 0 {
-		query.Select(field)
-	}
 	if err := query.Take(&result).Error; err != nil {
 		return result, err
 	}
