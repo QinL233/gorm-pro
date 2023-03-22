@@ -76,17 +76,41 @@ func TestList(t *testing.T) {
 	list1, _ := dao.ListSortLimitFieldTo[User, struct{ Username, Password string }](
 		driver(),
 		[]string{"username", "password"},
-		"id", 10,
+		"id desc", 10,
 		"username = ?", "root")
 	fmt.Println(list1)
 	list2, _ := dao.ListEntitySortLimitFieldTo[User, User](
 		driver(),
 		nil,
-		"id", 10,
+		"id asc", 10,
 		User{Id: 1})
 	fmt.Println(list2)
 	list3, _ := dao.ListScopeTo[User, User](driver(), func(db *gorm.DB) *gorm.DB {
 		return db.Select("username").Limit(10)
 	})
 	fmt.Println(list3)
+}
+
+func TestPage(t *testing.T) {
+	count1, page1, _ := dao.PageSortFieldTo[User, struct{ Username string }](
+		driver(),
+		[]string{"username"},
+		"id asc", 10, 1,
+		"id > ?", 0)
+	fmt.Println(count1, page1)
+	count2, page2, _ := dao.PageEntitySortFieldTo[User, struct{ Username string }](
+		driver(),
+		[]string{"username"},
+		"id asc", 10, 1,
+		User{Username: "root"})
+	fmt.Println(count2, page2)
+	count3, page3, _ := dao.PageScopeTo[User, struct{ Username string }](
+		driver(), 10, 1,
+		func(db *gorm.DB) *gorm.DB {
+			//page函数使用了select count(*)因此注意scope不可以覆盖select
+			//db.Select("username")
+			return db.Where("id > ?", 1)
+		},
+	)
+	fmt.Println(count3, page3)
 }

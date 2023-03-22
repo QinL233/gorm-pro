@@ -6,7 +6,7 @@ import "gorm.io/gorm"
 指定参数进行查询 - 单表
 */
 func List[T any](db *gorm.DB, condition interface{}, args ...interface{}) ([]T, error) {
-	return ListSort[T, T](db, "", condition, args...)
+	return ListSort[T](db, "", condition, args...)
 }
 
 func ListSort[T any](db *gorm.DB, sort string, condition interface{}, args ...interface{}) ([]T, error) {
@@ -44,7 +44,7 @@ func ListSortLimitFieldTo[T any, E any](db *gorm.DB, field []string, sort string
 指定对象进行查询 - 单表
 */
 func ListEntity[T any](db *gorm.DB, entity T) ([]T, error) {
-	return ListEntitySort[T, T](db, "", entity)
+	return ListEntitySort[T](db, "", entity)
 }
 
 func ListEntitySort[T any](db *gorm.DB, sort string, entity T) ([]T, error) {
