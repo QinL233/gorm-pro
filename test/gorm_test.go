@@ -38,14 +38,17 @@ func driver() *gorm.DB {
 }
 
 func TestSaveBatch(t *testing.T) {
+	//批量新增，id重复报错
 	driver().Create([]User{
 		{1, "admin1", "admin1"},
 		{2, "admin2", "admin2"},
 	})
+	//批量新增或变更
 	driver().Save([]User{
 		{1, "root1", "root1"},
 		{2, "root2", "root2"},
 	})
+	//无id则批量新增
 	driver().Save([]User{
 		{Username: "admin1", Password: "admin1"},
 		{Username: "admin2", Password: "admin2"},
@@ -54,6 +57,11 @@ func TestSaveBatch(t *testing.T) {
 	driver().Save([]User{
 		{3, "", "admin"},
 		{4, "", "admin"},
+	})
+	//id=0则新增，id=exist则变更
+	driver().Save([]User{
+		{3, "admin", "admin"},
+		{0, "", "admin"},
 	})
 }
 
@@ -98,11 +106,10 @@ func TestCount(t *testing.T) {
 		return db.Where("username like ?", "%oo%")
 	})
 	fmt.Println(count3)
-
 }
 
 func TestOne(t *testing.T) {
-	one1, _ := dao.OneKeyFieldTo[User, struct{ Token string }](driver(), []string{"username as token"}, 2)
+	one1, _ := dao.OneKeyFieldTo[User, string](driver(), []string{"username as token"}, 2)
 	fmt.Println(one1)
 	one2, _ := dao.OneFieldTo[User, struct{ Token string }](driver(), []string{"username as token"}, "password = ?", "admin")
 	fmt.Println(one2)
