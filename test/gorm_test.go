@@ -20,7 +20,7 @@ func driver() *gorm.DB {
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 		"root",
 		"root",
-		"172.17.181.4",
+		"localhost",
 		3306,
 		"test")),
 		&gorm.Config{
