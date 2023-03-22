@@ -50,6 +50,11 @@ func TestSaveBatch(t *testing.T) {
 		{Username: "admin1", Password: "admin1"},
 		{Username: "admin2", Password: "admin2"},
 	})
+	//save变更会导致所有列变更
+	driver().Save([]User{
+		{3, "", "admin"},
+		{4, "", "admin"},
+	})
 }
 
 func TestDel(t *testing.T) {
@@ -63,6 +68,25 @@ func TestDel(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	dao.Update[User](driver(), "username", "admin3", "id = ?", 3)
+	dao.UpdateEntity(driver(), "username", gorm.Expr("id + ?", 1), User{Id: 4})
+	dao.UpdateScope[User](driver(), "username", "test", func(db *gorm.DB) *gorm.DB {
+		return db.Where("id = ?", 4)
+	})
+	dao.Updates[User](driver(), map[string]interface{}{
+		"username": "admin33",
+		"password": "admin33",
+	}, "id = ?", 3)
+	dao.UpdatesEntity(driver(), map[string]interface{}{
+		"username": gorm.Expr("id + ?", 1),
+		"password": gorm.Expr("id + ?", 1),
+	}, User{Id: 4})
+	dao.UpdatesScope[User](driver(), map[string]interface{}{
+		"username": "test",
+		"password": "test",
+	}, func(db *gorm.DB) *gorm.DB {
+		return db.Where("id = ?", 4)
+	})
 }
 
 func TestCount(t *testing.T) {
